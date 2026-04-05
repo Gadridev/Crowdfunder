@@ -6,17 +6,12 @@ import { Project } from "../models/Project.model.js";
 import { User } from "../models/User.model.js";
 import { AppError } from "../utils/AppError.js";
 import { applyInvestment } from "../service/investmentLogic.js";
+import { buildInvestorPortfolio, toPercentage } from "../service/investorPortfolioRead.js";
 
 function assertValidObjectId(id: string, label: string): void {
   if (!Types.ObjectId.isValid(id)) {
     throw new AppError(`Invalid ${label}`, 400);
   }
-}
-
-function toPercentage(amount: number, capital: number): number {
-  if (capital <= 0) return 0;
-  const value = (amount / capital) * 100;
-  return Number(value.toFixed(2));
 }
 
 export const invest = asyncHandler(async (req: Request, res: Response, _next: NextFunction) => {
@@ -214,43 +209,7 @@ export const getMyInvestments = asyncHandler(async (req: Request, res: Response,
 
   assertValidObjectId(investorId, "investor id");
 
-  const investorObjectId = new Types.ObjectId(investorId);
-
-  const agg = await Investment.aggregate([
-    { $match: { investorId: investorObjectId } },
-    { $group: { _id: "$projectId", sumAmount: { $sum: "$amount" } } },
-    {
-      $lookup: {
-        from: Project.collection.name,
-        localField: "_id",
-        foreignField: "_id",
-        as: "project",
-      },
-    },
-    { $unwind: "$project" },
-    {
-      $project: {
-        projectId: "$_id",
-        title: "$project.title",
-        capital: "$project.capital",
-        status: "$project.status",
-        amountInvested: "$sumAmount",
-      },
-    },
-  ]);
-
-  const investments = agg.map((row) => {
-    return {
-      projectId: row.projectId.toString(),
-      title: row.title,
-      capital: row.capital,
-      status: row.status,
-      amountInvested: row.amountInvested,
-      percentage: toPercentage(row.amountInvested, row.capital),
-    };
-  });
-
-  const totalInvested = investments.reduce((sum, row) => sum + row.amountInvested, 0);
+  const { investments, totalInvested } = await buildInvestorPortfolio(new Types.ObjectId(investorId));
 
   res.status(200).json({
     status: "success",

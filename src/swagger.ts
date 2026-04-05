@@ -21,6 +21,7 @@ export const swaggerDocs = swaggerJSDoc({
     tags: [
       { name: "Auth", description: "Register, login, current user" },
       { name: "Projects", description: "Project CRUD, owner views, invest (mounted at /api/projects)" },
+      { name: "Admin", description: "Read-only admin (JWT role admin)" },
     ],
     components: {
       securitySchemes: {
