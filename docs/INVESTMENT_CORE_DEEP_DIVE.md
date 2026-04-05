@@ -8,6 +8,8 @@ This document explains the **Investment core** slice that enables:
 - Project Owner reads: investors-per-project + investor portfolio (scoped)
 - Investor/Admin-adjacent reads: `GET /api/investments/me`
 
+For **session/transaction boundaries**, state diagrams, and a **failure matrix** (`createProject`, `invest`, `applyInvestment`), see [ATOMIC_SESSIONS_AND_TRANSACTIONS.md](./ATOMIC_SESSIONS_AND_TRANSACTIONS.md).
+
 ---
 
 ## Endpoints covered

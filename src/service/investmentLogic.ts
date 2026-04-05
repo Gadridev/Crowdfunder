@@ -23,7 +23,6 @@ type ApplyInvestmentArgs = {
  */
 export async function applyInvestment(args: ApplyInvestmentArgs) {
   const { investorId, projectId, amount, session } = args;
-  console.log(session)
 
   assertIsNonNegativeInteger(amount, "amount");
   if (amount === 0) {
