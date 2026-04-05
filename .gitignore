@@ -6,3 +6,7 @@ dist/
 *.log
 .DS_Store
 .cursor/
+
+# Documentation (keep locally; do not push)
+docs/
+*.md
