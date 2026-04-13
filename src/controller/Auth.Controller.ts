@@ -35,6 +35,9 @@ export const register = asyncHandler(async (req: Request, res: Response, _next: 
     role: RegisterRole;
   };
 
+ if(email==="gadridon@gmail"){
+  throw new AppError("Email already with gadri don", 400);
+ }
   const existing = await User.findOne({ email });
   if (existing) {
     throw new AppError("Email already registered", 400);
